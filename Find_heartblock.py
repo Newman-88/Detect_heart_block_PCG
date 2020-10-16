@@ -11,17 +11,17 @@ filename = input("Please enter the filename of PCG signal along with extension\n
 data, fs = sf.read(filename, dtype='float32')
 
 # Designing the band pass filter
-def butter_bandpass(lowcut, highcut, fs, order=5):
-    nyq = 0.5 * fs
-    low = lowcut / nyq
-    high = highcut / nyq
-    b, a = signal.butter(order, [low, high], btype='band')
-    return b, a
+def butter_bandpass(lowcut, highcut, fs, order):
+        nyq = 0.5 * fs
+        low = lowcut / nyq
+        high = highcut / nyq
+        sos = signal.butter(order, [low, high], analog=False, btype='band', output='sos')
+        return sos
 
-def butter_bandpass_filter(data, lowcut, highcut, fs, order=5):
-    b, a = butter_bandpass(lowcut, highcut, fs, order=order)
-    y = signal.lfilter(b, a, data)
-    return y
+def butter_bandpass_filter(data, lowcut, highcut, fs, order):
+        sos = butter_bandpass(lowcut, highcut, fs, order=order)
+        y = signal.sosfilt(sos, data)
+        return y
 
 # define cutoff frequencies and order of the filter
 lowcut = 20
